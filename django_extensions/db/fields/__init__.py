@@ -71,6 +71,8 @@ class AutoSlugField(SlugField):
             # slugify the original field content and set next step to 2
             slug_for_field = lambda field: self.slugify_func(getattr(model_instance, field))
             slug = self.separator.join(map(slug_for_field, self._populate_from))
+            if not slug:
+                slug = model_instance.pk
             next = 2
         else:
             # get slug from the current model instance and calculate next
