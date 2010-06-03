@@ -66,8 +66,10 @@ class AutoSlugField(SlugField):
         if not isinstance(self._populate_from, (list, tuple)):
             self._populate_from = (self._populate_from, )
         slug_field = model_instance._meta.get_field(self.attname)
-
-        if add or self.overwrite:
+        
+        # if the provided slug is blank, assume that we should recreate it, rather 
+        # than just appending a number
+        if add or self.overwrite or not self._slug_strip(getattr(model_instance, self.attname)):
             # slugify the original field content and set next step to 2
             slug_for_field = lambda field: self.slugify_func(getattr(model_instance, field))
             slug = self.separator.join(map(slug_for_field, self._populate_from))
